@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEM 加密解密平台 — 數學 × 電腦科</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0; padding: 20px; color: #222;
+  }
+  .container {
+    max-width: 920px; margin: 0 auto; background: #fff;
+    border-radius: 16px; padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  h1 { text-align: center; color: #4a3f8f; margin: 0 0 5px; }
+  .subtitle { text-align: center; color: #666; margin-bottom: 25px; }
+  .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+  .tab-btn {
+    flex: 1; padding: 14px; font-size: 17px; font-weight: bold;
+    border: none; border-radius: 10px 10px 0 0; cursor: pointer;
+    background: #d6d3ec; color: #4a3f8f; transition: 0.2s;
+  }
+  .tab-btn.active { background: #4a3f8f; color: #fff; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .step {
+    border-left: 6px solid #4a3f8f; border-radius: 8px;
+    padding: 15px 20px; margin: 20px 0;
+  }
+  .step h2 { margin: 0 0 10px; font-size: 1.1em; color: #4a3f8f; }
+  .given {
+    background: #fdebd0; border: 1px solid #f5cba7; border-radius: 8px;
+    padding: 12px 18px; font-size: 16px; margin-bottom: 10px;
+  }
+  .code-box {
+    background: #1e1e2e; color: #c5e1a5; font-family: "Consolas", monospace;
+    border-radius: 8px; padding: 15px; font-size: 15px; line-height: 1.8;
+  }
+  .code-box .kw { color: #ff79c6; }
+  .code-box .fn { color: #8be9fd; }
+  .code-box .cm { color: #6272a4; }
+  .code-box .num { color: #ffb86c; }
+  input.formula {
+    background: #ffeaa7; border: 2px dashed #fdcb6e; border-radius: 5px;
+    font-family: "Consolas", monospace; font-size: 15px; padding: 4px 8px;
+    width: 220px; color: #2d3436; font-weight: bold;
+  }
+  input.text-in {
+    font-size: 16px; padding: 8px 12px; border: 2px solid #b2bec3;
+    border-radius: 8px; width: 100%;
+  }
+  button.run {
+    background: #4a3f8f; color: #fff; border: none; border-radius: 8px;
+    padding: 12px 28px; font-size: 16px; cursor: pointer; margin-top: 12px;
+    transition: 0.2s;
+  }
+  button.run:hover { background: #36306b; }
+  table {
+    width: 100%; border-collapse: collapse; margin-top: 18px;
+    text-align: center; font-size: 15px;
+  }
+  th, td { border: 1px solid #b2bec3; padding: 8px; }
+  th { background: #4a3f8f; color: #fff; }
+  .label-col { background: #e8e6f5; font-weight: bold; }
+  .result {
+    margin-top: 18px; padding: 15px; background: #d5f5e3;
+    border-radius: 8px; font-size: 18px; word-break: break-all;
+  }
+  .result b { color: #1e8449; font-size: 22px; }
+  .error { color: #c0392b; font-weight: bold; margin-top: 10px; }
+  .hint { font-size: 13px; color: #777; margin-top: 5px; }
+  .bg1 { background: #f4f0ff; }
+  .bg2 { background: #fff5f0; }
+  .step.t2 { border-color: #c0392b; }
+  .step.t2 h2 { color: #c0392b; }
+  .label-col.t2 { background: #f2d7d5; }
+  th.t2 { background: #c0392b; }
+  button.run.t2 { background: #c0392b; }
+  button.run.t2:hover { background: #922b21; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔐 STEM 加密解密平台</h1>
+  <p class="subtitle">數學科 × 電腦科　｜　ASCII 碼</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(1)">🔒 任務一：加密</button>
+    <button class="tab-btn" onclick="switchTab(2)">🔓 任務二：解密</button>
+  </div>
+
+  <div class="tab-content active" id="tab1">
+    <div class="step bg1">
+      <h2>任務簡介</h2>
+      <div class="given">
+        ✏️ 請你<b>自行設計</b>一條加密公式，把明文的 ASCII 碼（x）轉換成密文（y）。<br>
+        例如可以用 <b>加、減、乘、除</b> 的組合，設計出屬於你自己的密碼！
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>步驟 1：設計並填寫你的加密公式</h2>
+      <div class="code-box">
+        <span class="kw">def</span> <span class="fn">encrypt</span>(ch):<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;x = ord(ch)　<span class="cm"># 明文字元轉 ASCII 碼</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;y = <input type="text" class="formula" id="formula1" placeholder="例如 (x - 7) / 10">
+        &nbsp;<span class="cm"># ← 在這裡設計你的公式</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> y
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>步驟 2：輸入明文</h2>
+      <input type="text" class="text-in" id="plaintext" value="CandyBirds">
+      <br>
+      <button class="run" onclick="encrypt()">🔒 開始加密！</button>
+    </div>
+
+    <div class="step">
+      <h2>步驟 3：加密結果</h2>
+      <div id="output1"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab2">
+    <div class="step t2 bg2">
+      <h2>任務簡介</h2>
+      <div class="given">
+        🔑 加密公式：<b>Y = (X − 7) / 10</b>　（X 是 ASCII 碼，Y 是密文）<br>
+        📩 收到的密文：<b>5.9　9.8　10.7　10.9　9.7　9.3　9　11.4</b>
+      </div>
+      <div class="code-box">
+        <span class="kw">def</span> <span class="fn">decrypt</span>(y):<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;x = <span class="num">10</span> * y + <span class="num">7</span>　<span class="cm"># 解密公式（加密公式的逆運算）</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> chr(x)　<span class="cm"># ASCII 碼轉回字元</span>
+      </div>
+    </div>
+
+    <div class="step t2">
+      <h2>步驟 1：輸入密文（用空格分隔數字）</h2>
+      <input type="text" class="text-in" id="ciphertext" placeholder="例如 5.9 9.8 10.7 ...">
+      <br>
+      <button class="run t2" onclick="decrypt()">🔍 開始解密！</button>
+    </div>
+
+    <div class="step t2">
+      <h2>步驟 2：解密結果</h2>
+      <div id="output2"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(n) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) =>
+    b.classList.toggle('active', i === n - 1));
+  document.querySelectorAll('.tab-content').forEach((c, i) =>
+    c.classList.toggle('active', i === n - 1));
+}
+
+function checkFormula(f, varName) {
+  const re = new RegExp('^[\\d' + varName + '\\s\\.\\+\\-\\*\\/\\(\\)]+$');
+  return re.test(f);
+}
+
+function encrypt() {
+  const formula = document.getElementById('formula1').value.trim();
+  const text = document.getElementById('plaintext').value;
+  const output = document.getElementById('output1');
+
+  if (!formula) { output.innerHTML = '<p class="error">請先設計並填寫加密公式！</p>'; return; }
+  if (!text) { output.innerHTML = '<p class="error">請輸入明文！</p>'; return; }
+  if (!checkFormula(formula, 'x')) {
+    output.innerHTML = '<p class="error">公式只可包含 x、數字及 + - * / ( )，請檢查！</p>'; return;
+  }
+
+  let plain = [], ascii = [], cipher = [];
+  for (const ch of text) {
+    const x = ch.charCodeAt(0);
+    let y;
+    try { y = Function('x', 'return (' + formula + ');')(x); }
+    catch (e) { output.innerHTML = '<p class="error">公式格式有誤，請檢查！</p>'; return; }
+    y = Math.round(y * 1000) / 1000;
+    plain.push(ch === ' ' ? '␣' : ch); ascii.push(x); cipher.push(y);
+  }
+
+  let html = '<table><tr><td class="label-col">明文</td>';
+  plain.forEach(p => html += '<th>' + p + '</th>');
+  html += '</tr><tr><td class="label-col">ASCII 碼</td>';
+  ascii.forEach(a => html += '<td>' + a + '</td>');
+  html += '</tr><tr><td class="label-col">密文</td>';
+  cipher.forEach(c => html += '<td>' + c + '</td>');
+  html += '</tr></table>';
+  html += '<div class="result">所得密文：<b>' + cipher.join('　') + '</b></div>';
+  output.innerHTML = html;
+}
+
+function decrypt() {
+  const raw = document.getElementById('ciphertext').value.trim();
+  const output = document.getElementById('output2');
+
+  if (!raw) { output.innerHTML = '<p class="error">請輸入密文！</p>'; return; }
+
+  const nums = raw.split(/[\s,]+/).filter(s => s !== '');
+  let cipher = [], ascii = [], plain = [], message = '';
+
+  for (const n of nums) {
+    const y = parseFloat(n);
+    if (isNaN(y)) { output.innerHTML = '<p class="error">密文格式有誤：「' + n + '」不是數字。</p>'; return; }
+    let x = Math.round(10 * y + 7);
+    const ch = (x >= 32 && x <= 255) ? String.fromCharCode(x) : '?';
+    cipher.push(n); ascii.push(x); plain.push(ch === ' ' ? '␣' : ch); message += ch;
+  }
+
+  let html = '<table><tr><td class="label-col t2">密文</td>';
+  cipher.forEach(c => html += '<th class="t2">' + c + '</th>');
+  html += '</tr><tr><td class="label-col t2">ASCII 碼</td>';
+  ascii.forEach(a => html += '<td>' + a + '</td>');
+  html += '</tr><tr><td class="label-col t2">明文</td>';
+  plain.forEach(p => html += '<td>' + p + '</td>');
+  html += '</tr></table>';
+  html += '<div class="result">所得明文：<b>' + message + '</b></div>';
+  output.innerHTML = html;
+}
+</script>
+
+
+</body></html>
